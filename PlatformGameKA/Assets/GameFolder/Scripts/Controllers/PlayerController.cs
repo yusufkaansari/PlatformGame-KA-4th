@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     float _attackDelayTime = 1f;
     float _currentDelayTime;
     bool _canAttack = false;
+    Animator _animator;
 
     [SerializeField] float speed;
     [SerializeField] float jumpPower;
@@ -24,17 +25,17 @@ public class PlayerController : MonoBehaviour
     {
         _myBody = GetComponent<Rigidbody2D>();
         _defaultLocalScale = transform.localScale;
+        _animator = GetComponent<Animator>();
     }
 
     private void Update()
     {
         _mySpeedX = Input.GetAxis("Horizontal");
+        _animator.SetFloat("Speed", Mathf.Abs(_mySpeedX));
 
         _myBody.velocity = new Vector2(_mySpeedX * speed, _myBody.velocity.y);
-
-        SetPlayerFace(_mySpeedX);
-
         
+        SetPlayerFace(_mySpeedX);
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
@@ -53,12 +54,21 @@ public class PlayerController : MonoBehaviour
         {
             if (_canAttack)
             {
-                SpawnArrow();
+                _animator.SetTrigger("Attack");
+                Invoke("SpawnArrow", 0.5f);
                 _canAttack = false;
             }
         }
+        
     }
-
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Enemy")
+        {
+            _animator.SetTrigger("Die");
+            enabled = false;
+        }
+    }
     void SpawnArrow()
     {
         GameObject myArrow = Instantiate(arrowPrefab, transform.position, Quaternion.identity);
@@ -70,8 +80,7 @@ public class PlayerController : MonoBehaviour
         else
         {
             myArrow.transform.localScale = new Vector3(-myArrow.transform.localScale.x, myArrow.transform.localScale.y, myArrow.transform.localScale.z);
-            myArrow.GetComponent<Rigidbody2D>().velocity = new Vector3(-arrowSpeed, 0f);
-            
+            myArrow.GetComponent<Rigidbody2D>().velocity = new Vector3(-arrowSpeed, 0f);            
         }
         
     }
@@ -79,8 +88,10 @@ public class PlayerController : MonoBehaviour
     {
         if (onGround == true)
         {
+            _animator.SetTrigger("Jump");
             _myBody.velocity = new Vector2(_myBody.velocity.x, jumpPower);
             _canDoubleJump = true;
+            
         }
         else
         {
