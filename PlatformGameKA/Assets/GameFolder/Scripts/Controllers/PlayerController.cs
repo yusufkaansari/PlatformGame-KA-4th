@@ -68,6 +68,7 @@ public class PlayerController : MonoBehaviour
             _animator.SetTrigger("Die");
             enabled = false;
         }
+
     }
     void SpawnArrow()
     {

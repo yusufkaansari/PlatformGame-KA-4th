@@ -119,6 +119,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxLifeTime: 2
+  dieEffect: {fileID: 1818792987368934956, guid: bab2540988dc9604ba991d85491d4561, type: 3}
 --- !u!60 &4513990423098832136
 PolygonCollider2D:
   m_ObjectHideFlags: 0
