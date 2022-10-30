@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -18,6 +19,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] GameObject arrowPrefab;
     [SerializeField] GameObject arrowParent;
     [SerializeField] float arrowSpeed;
+    [SerializeField] int arrowNumber;
+    [SerializeField] Text arrowNumberText;
+    [SerializeField] AudioClip dieMusic;
 
     public bool onGround;
 
@@ -26,6 +30,8 @@ public class PlayerController : MonoBehaviour
         _myBody = GetComponent<Rigidbody2D>();
         _defaultLocalScale = transform.localScale;
         _animator = GetComponent<Animator>();
+
+        WriteArrowNumber();
     }
 
     private void Update()
@@ -50,7 +56,7 @@ public class PlayerController : MonoBehaviour
         }
 
 
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && arrowNumber>0)
         {
             if (_canAttack)
             {
@@ -63,12 +69,18 @@ public class PlayerController : MonoBehaviour
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "Enemy")
+        if (collision.gameObject.CompareTag("Enemy"))
         {
-            _animator.SetTrigger("Die");
-            enabled = false;
+            Die();
         }
 
+    }
+    void Die()
+    {
+        GameObject.Find("SoundController").GetComponent<AudioSource>().clip = null;
+        GameObject.Find("SoundController").GetComponent<AudioSource>().PlayOneShot(dieMusic); 
+        _animator.SetTrigger("Die");
+        enabled = false;
     }
     void SpawnArrow()
     {
@@ -83,7 +95,8 @@ public class PlayerController : MonoBehaviour
             myArrow.transform.localScale = new Vector3(-myArrow.transform.localScale.x, myArrow.transform.localScale.y, myArrow.transform.localScale.z);
             myArrow.GetComponent<Rigidbody2D>().velocity = new Vector3(-arrowSpeed, 0f);            
         }
-        
+        arrowNumber--;
+        WriteArrowNumber();
     }
     void JumpAction()
     {
@@ -115,5 +128,9 @@ public class PlayerController : MonoBehaviour
         {
             transform.localScale = new Vector3(-_defaultLocalScale.x, _defaultLocalScale.y, _defaultLocalScale.z);
         }
+    }
+    void WriteArrowNumber()
+    {
+        arrowNumberText.text = arrowNumber.ToString();
     }
 }
