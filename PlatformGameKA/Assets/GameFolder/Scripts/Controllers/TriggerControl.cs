@@ -8,12 +8,18 @@ public class TriggerControl : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        isOnGround(true);
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            isOnGround(true);
+        }
     }
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        isOnGround(false);
-    }
+    //private void OnTriggerExit2D(Collider2D collision)
+    //{
+    //    if (collision.gameObject.CompareTag("Ground"))
+    //    {            
+    //        isOnGround(false);
+    //    }
+    //}
 
     void isOnGround(bool selection)
     {

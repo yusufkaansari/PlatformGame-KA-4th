@@ -22,6 +22,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] int arrowNumber;
     [SerializeField] Text arrowNumberText;
     [SerializeField] AudioClip dieMusic;
+    [SerializeField] GameObject winPanel, losePanel;
 
     public bool onGround;
 
@@ -73,14 +74,28 @@ public class PlayerController : MonoBehaviour
         {
             Die();
         }
+        if (collision.gameObject.CompareTag("Finish"))
+        {
+            Destroy(collision.gameObject);
+            StartCoroutine(WaitForPanel(winPanel,1f));
+        }
 
     }
-    void Die()
+
+    public void Die()
     {
         GameObject.Find("SoundController").GetComponent<AudioSource>().clip = null;
         GameObject.Find("SoundController").GetComponent<AudioSource>().PlayOneShot(dieMusic); 
         _animator.SetTrigger("Die");
-        enabled = false;
+        _myBody.constraints = RigidbodyConstraints2D.FreezeAll;
+        
+        StartCoroutine(WaitForPanel(losePanel, 1.5f));
+    }
+    IEnumerator WaitForPanel(GameObject panel,float timeWait)
+    {
+        yield return new WaitForSecondsRealtime(timeWait);
+        panel.SetActive(true);
+        Time.timeScale = 0f;
     }
     void SpawnArrow()
     {
