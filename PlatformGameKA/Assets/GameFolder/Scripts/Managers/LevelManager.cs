@@ -6,15 +6,13 @@ using UnityEngine.SceneManagement;
 public class LevelManager : MonoBehaviour
 {
     int activeScene;
-    private void Start()
-    {
-        int activeScene = SceneManager.GetActiveScene().buildIndex;
-    }
+
     public void NextLevel()
     {
         Time.timeScale = 1f;
+        activeScene = SceneManager.GetActiveScene().buildIndex;
         Debug.Log(SceneManager.sceneCount);
-        if (activeScene == SceneManager.sceneCount - 1)
+        if (activeScene > SceneManager.sceneCount - 1)
         {
             SceneManager.LoadScene(0);
         }
@@ -27,6 +25,7 @@ public class LevelManager : MonoBehaviour
     }
     public void Restart()
     {
+        activeScene = SceneManager.GetActiveScene().buildIndex;
         Time.timeScale = 1f;
         
         SceneManager.LoadScene(activeScene);
